@@ -15,6 +15,15 @@ export default class webEsMonitoring {
 
     this.url = config.reportUrl
 
+    // if request error log has "cluster_block_exception read_only_allow_delete"
+    // put(config.reportUrl + '/_all/_settings', {
+    //   index: {
+    //     blocks: {
+    //       read_only_allow_delete: 'false'
+    //     }
+    //   }
+    // })
+
     setInterval(() => {
       this.submit()
     }, config.lazy || 1000)
@@ -28,21 +37,26 @@ export default class webEsMonitoring {
 
   done(result: any) {
     this.queue.enqueue(result)
-    console.log('queue-size', this.queue.size(), this.queue.front())
-
-    console.log('done:result', result)
   }
 
   async submit() {
     if (this.queue.size()) {
       const result = this.queue.front()
+      if (result.esIndex) {
+        await post(this.url + '/' + result.esIndex + '/_doc/', result).catch(
+          e => {
+            console.error('request', e)
+          }
+        )
+      }
 
-      result.esIndex && (await put(this.url + '/' + result.esIndex, result))
       await get(this.url + '/_cat/indices?v', result)
 
       this.queue.dequeue()
 
-      await this.submit()
+      await setTimeout(async () => {
+        await this.submit()
+      }, 1000)
     }
     return Promise.resolve()
   }

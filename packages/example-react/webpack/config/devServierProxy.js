@@ -31,7 +31,7 @@ export const devServerProxyConfig = {
     },
     */
     '/es': {
-        target: `http://192.168.2.253:9200/`,
+        target: `http://localhost:9200/`,
         pathRewrite: pathRewrite('^/es', ''),
         changeOrigin: true,
         secure: false,
