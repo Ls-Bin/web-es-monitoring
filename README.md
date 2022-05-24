@@ -54,7 +54,7 @@ use Elasticsearch + kibana
 1. copy file to win10 `docker cp kibana:/usr/share/kibana/config/kibana.yml e:\`
 1. add es info
    ```
-   elasticsearch.username: "kibana"
+   elasticsearch.username: "elastic"
    elasticsearch.password: "123456"
    xpack.reporting.encryptionKey: "a_random_string"
    xpack.security.encryptionKey: "something_at_least_32_characters"

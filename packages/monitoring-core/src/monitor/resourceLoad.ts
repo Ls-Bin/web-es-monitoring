@@ -22,20 +22,25 @@ export class resourceLoad {
 
       done({
         esIndex: 'web_resource_load',
+        createTime: new Date(),
         data: resource
           .filter((d: Pf) => resourceType.includes(d.initiatorType || ''))
-          .map((item: Pf) => ({
-            // 资源的名称
-            name: item.name,
-            // 资源加载耗时
-            duration: item.duration.toFixed(2),
-            // // 资源大小
-            transferSize: item.transferSize,
-            // // 资源所用协议
-            // protocol: item.nextHopProtocol,
-            initiatorType: item.initiatorType,
-            nextHopProtocol: item.nextHopProtocol
-          }))
+          .map((item: Pf) => {
+            const url = item.name
+            return {
+              fileName: url.substring(url.lastIndexOf('/') + 1),
+              // 资源的名称
+              name: url,
+              // 资源加载耗时
+              duration: +item.duration.toFixed(2),
+              // // 资源大小
+              transferSize: item.transferSize,
+              // // 资源所用协议
+              // protocol: item.nextHopProtocol,
+              initiatorType: item.initiatorType,
+              nextHopProtocol: item.nextHopProtocol
+            }
+          })
       })
     }, this.lazy)
   }
