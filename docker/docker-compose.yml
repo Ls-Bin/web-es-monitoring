@@ -24,4 +24,15 @@ services:
       - ./kibana/config:/usr/share/kibana/config
       # - ./kibana/data:/usr/share/kibana/data
 
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - 443:443
+      - 80:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/log:/var/log/nginx
+      - ./nginx/www:/var/www
+      - ./nginx/etc/letsencrypt:/etc/letsencrypt
 

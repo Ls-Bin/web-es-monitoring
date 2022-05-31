@@ -31,8 +31,14 @@ export const devServerProxyConfig = {
     },
     */
     '/es': {
-        target: `http://localhost:9200/`,
-        pathRewrite: pathRewrite('^/es', ''),
+        target: `http://localhost:80/`,
+        // pathRewrite: pathRewrite('^/es', ''),
+        changeOrigin: true,
+        secure: false,
+    },
+    '/test': {
+        target: `http://localhost:80/`,
+        // pathRewrite: pathRewrite('^/es', ''),
         changeOrigin: true,
         secure: false,
     },
