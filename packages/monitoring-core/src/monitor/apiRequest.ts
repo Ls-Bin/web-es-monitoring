@@ -1,27 +1,27 @@
 import { EsIndex } from './../enum';
 /* eslint-disable no-restricted-globals */
 
+interface ReportFn {
+    (config: ApiRequestReportData): void
+}
+
+interface ApiRequestReportData {
+    esIndex: string
+    createTime: Date
+    url: string, //url
+    userAgent?: string, //浏览器版本
+    type: string, //xhr
+    eventType: string //事件类型
+    status: number, //状态码
+    duration: number, //请求耗时
+    response?: string, //响应内容
+    params?: string //参数
+}
+
 interface PluginConfig {
-    report: Function
+    report: ReportFn
     reportUrl: string
 }
-
-type ApiRequestReportData = {
-    esIndex: string
-    createTime: any
-    title: string  //标题
-    "url": string, //url
-    "timestamp": number, //timestamp
-    "userAgent": string, //浏览器版本
-    "type": string, //xhr
-    "eventType": string, //事件类型 load
-    "pathname": string, //路径
-    "status": string, //状态码
-    "duration": number, //持续时间
-    "response": string, //响应内容
-    "params": string //参数
-}
-
 
 
 function initXHRErr() {
@@ -48,24 +48,32 @@ function initXHRErr() {
         window.dispatchEvent(ajaxEvent);
     }
 
-    let oldXHR = window.XMLHttpRequest;
+
+    let oldXHR = window.XMLHttpRequest as any;
+    let open = window.XMLHttpRequest.prototype.open
+    function openReplacement(this: any, method: string, url: string) {
+        this._url = url
+        return open.apply(this, arguments as any);
+    }
+
+    oldXHR.prototype.open = openReplacement;
 
     function newXHR() {
         let realXHR = new oldXHR();
         // this指向window
-        realXHR.addEventListener('abort', function () { ajaxEventTrigger.call(this, 'ajaxAbort'); }, false);
+        realXHR.addEventListener('abort', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxAbort'); }, false);
 
-        realXHR.addEventListener('error', function () { ajaxEventTrigger.call(this, 'ajaxError'); }, false);
+        realXHR.addEventListener('error', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxError'); }, false);
 
-        realXHR.addEventListener('load', function () { ajaxEventTrigger.call(this, 'ajaxLoad'); }, false);
-        realXHR.addEventListener('loadstart', function () { ajaxEventTrigger.call(this, 'ajaxLoadStart'); }, false);
-        realXHR.addEventListener('loadend', function () { ajaxEventTrigger.call(this, 'ajaxLoadEnd'); }, false);
+        realXHR.addEventListener('load', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxLoad'); }, false);
+        realXHR.addEventListener('loadstart', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxLoadStart'); }, false);
+        realXHR.addEventListener('loadend', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxLoadEnd'); }, false);
 
-        realXHR.addEventListener('progress', function () { ajaxEventTrigger.call(this, 'ajaxProgress'); }, false);
+        realXHR.addEventListener('progress', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxProgress'); }, false);
 
-        realXHR.addEventListener('timeout', function () { ajaxEventTrigger.call(this, 'ajaxTimeout'); }, false);
+        realXHR.addEventListener('timeout', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxTimeout'); }, false);
 
-        realXHR.addEventListener('readystatechange', function () { ajaxEventTrigger.call(this, 'ajaxReadyStateChange'); }, false);
+        realXHR.addEventListener('readystatechange', function (this: any,) { ajaxEventTrigger.call(this, 'ajaxReadyStateChange'); }, false);
 
         return realXHR;
     }
@@ -89,26 +97,30 @@ export class apiRequest {
             })
 
         });
-        window.addEventListener('ajaxLoadEnd', function (e: any) {
+        window.addEventListener('ajaxLoadEnd', function () {
             ajaxRecordArr.forEach(record => {
+
                 if (record.isLoadEnd) return;
                 const XHR = record.event.detail
-
                 if (XHR.status > 0) {
+                    const url = XHR.responseURL
                     record.isLoadEnd = true
 
                     // exclude es report xhr 
-                    if (!XHR.responseURL.includes(reportUrl) && !XHR.responseURL.includes(`/${EsIndex.ApiRequest}/`)) {
+                    if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
                         report({
                             esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
-                            "url": XHR.responseURL, //url
-                            "type": 'xhr', //xhr
-                            "status": XHR.status, //xhr status
-                            "duration": new Date().getTime() - record.timeStamp, 
-                            // "response": string, 
-                            // "params": string 
+                            url: url,
+                            type: 'xhr',
+                            eventType: 'loadEnd',
+                            status: XHR.status,
+                            duration: new Date().getTime() - record.timeStamp,
+
+                            // userAgent: '',
+                            // response: '',
+                            // params: ''
                         })
                     }
 
@@ -117,6 +129,40 @@ export class apiRequest {
 
             })
 
+        });
+
+        window.addEventListener('ajaxTimeout', function () {
+
+            ajaxRecordArr.forEach(record => {
+
+                if (record.isLoadEnd) return;
+                const XHR = record.event.detail
+
+                // find current timeout XHR
+                if (XHR.status === 0 && XHR.readyState === 4 && XHR.responseURL === '') {
+                    const url = XHR._url
+                    record.isLoadEnd = true
+
+                    // // exclude es report xhr 
+                    if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
+
+                        report({
+                            esIndex: EsIndex.ApiRequest,
+                            createTime: new Date(),
+                            url: url,
+                            type: 'xhr',
+                            eventType: 'timeout',
+                            status: 0,
+                            duration: XHR.timeout,
+                        })
+                    }
+
+                    return
+                }
+
+
+
+            })
         });
 
     }

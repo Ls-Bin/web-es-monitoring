@@ -13,8 +13,10 @@ export default class webEsMonitoring {
   queue: Queue
   reportUrl: string
   config: Config
+  lazy: number
   constructor(config: Config) {
     this.config = config
+    this.lazy = config.lazy || 2000
     this.queue = new Queue()
 
     this.reportUrl = config.reportUrl
@@ -31,11 +33,11 @@ export default class webEsMonitoring {
     setInterval(() => {
       this.submit()
 
-    }, config.lazy || 3000)
+    }, this.lazy)
 
     // test
     setTimeout(() => {
-      post('http://localhost:8080/test',{})
+      post('http://localhost:8080/test', {})
     }, 2000);
   }
 
@@ -49,27 +51,23 @@ export default class webEsMonitoring {
   report(result: any) {
     this.queue.enqueue(result)
 
-  
+
   }
 
   async submit() {
     if (this.queue.size()) {
       const result = this.queue.front()
+      this.queue.dequeue()
       if (result.esIndex) {
         await post(this.reportUrl + '/' + result.esIndex + '/_doc/', result).catch(
-          error => {
+          async error => {
+            if (!result.errorCount || result.errorCount < 3) {
+              this.report({ ...result, errorCount: (result.errorCount || 0) + 1 })
+            }
             console.error('request', error)
           }
         )
       }
-
-      // await get(this.reportUrl + '/_cat/indices?v', result)
-
-      this.queue.dequeue()
-
-      await setTimeout(async () => {
-        await this.submit()
-      }, 1000)
     }
     return Promise.resolve()
   }
