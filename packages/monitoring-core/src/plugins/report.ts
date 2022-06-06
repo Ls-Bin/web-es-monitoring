@@ -1,11 +1,21 @@
 
-import {  post } from '../http/index'
+import { post } from '../http/index'
+import { baseInfo } from '../utils'
+
+import {Browser} from '../utils/browser' 
+
+const browserInfo = new Browser();
 
 export default {
   install(options: any) {
     const report = (_opt: any) => {
       return async (result: any) => {
-        await post(_opt.reportUrl + '/' + result.esIndex + '/_doc/', result).catch(
+        const _esIndex = result._esIndex
+        delete result._esIndex
+        
+        const _params = Object.assign({}, baseInfo(),browserInfo,result)
+
+        await post(_opt.reportUrl + '/' + _esIndex + '/_doc/', _params).catch(
           async error => {
             if (!result.errorCount || result.errorCount < 3) {
               await setTimeout(async () => {
@@ -24,7 +34,7 @@ export default {
     //   if (this.queue.size()) {
     //     const result = this.queue.front()
     //     this.queue.dequeue()
-    //     if (result.esIndex) {
+    //     if (result._esIndex) {
     //       await report(result)
     //     }
     //   }

@@ -6,8 +6,11 @@ importers:
     specifiers:
       '@typescript-eslint/eslint-plugin': ^5.25.0
       '@typescript-eslint/parser': ^5.25.0
+      core-js: ~3.20.2
       eslint: ^8.16.0
       typescript: ^4.6.4
+    dependencies:
+      core-js: 3.20.3
     devDependencies:
       '@typescript-eslint/eslint-plugin': registry.npmmirror.com/@typescript-eslint/eslint-plugin/5.25.0_jorowkvdqu6pwramweg5le7ncu
       '@typescript-eslint/parser': registry.npmmirror.com/@typescript-eslint/parser/5.25.0_utdtartgf6fqqgkivzeynh76la
@@ -173,6 +176,11 @@ importers:
     specifiers: {}
 
 packages:
+
+  /core-js/3.20.3:
+    resolution: {integrity: sha512-vVl8j8ph6tRS3B8qir40H7yw7voy17xL0piAjlbBUsH7WIfzoedL/ZOr1OV9FyZQLWXsayOJyV4tnRyXR85/ag==}
+    requiresBuild: true
+    dev: false
 
   registry.npmmirror.com/@babel/code-frame/7.16.7:
     resolution: {integrity: sha512-iAXqUn8IIeBTNd72xsFlgaXHkMBMt6y4HJp1tIaK465CWLT/fG1aqB7ykr95gHHmlBdGbFeWWfyB4NJJ0nmeIg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@babel/code-frame/-/code-frame-7.16.7.tgz}

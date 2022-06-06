@@ -3,7 +3,7 @@ import { EsIndex } from './../enum';
 
 
 // interface ApiRequestReportData {
-//     esIndex: string
+//     _esIndex: string
 //     createTime: Date
 //     url: string, //url
 //     userAgent?: string, //浏览器版本
@@ -102,7 +102,7 @@ export default {
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
                         options.core.report({
-                            esIndex: EsIndex.ApiRequest,
+                            _esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
                             type: 'xhr',
@@ -139,7 +139,7 @@ export default {
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
                         options.core.report({
-                            esIndex: EsIndex.ApiRequest,
+                            _esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
                             type: 'xhr',

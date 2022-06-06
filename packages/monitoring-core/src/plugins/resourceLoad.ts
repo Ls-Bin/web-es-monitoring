@@ -8,14 +8,14 @@ interface Pf extends PerformanceEntry {
 
 
 export default {
-  lazy: 1000,
+  lazy: 2000,
   install(options:any) {
     const resourceType = ['script', 'css', 'video', 'audio', 'img', 'image']
 
     setTimeout(() => {
       const resource = performance.getEntriesByType('resource')
       options.core.report({
-        esIndex: EsIndex.ResourceLoad,
+        _esIndex: EsIndex.ResourceLoad,
         createTime: new Date(),
         data: resource
           .filter((d: Pf) => resourceType.includes(d.initiatorType || ''))
@@ -27,9 +27,9 @@ export default {
               name: url,
               // 资源加载耗时
               duration: Math.floor(item.duration),
-              // // 资源大小
+              //资源大小
               transferSize: item.transferSize,
-              // // 资源所用协议
+              //资源所用协议
               // protocol: item.nextHopProtocol,
               initiatorType: item.initiatorType,
               nextHopProtocol: item.nextHopProtocol

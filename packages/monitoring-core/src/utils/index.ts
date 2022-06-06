@@ -17,3 +17,10 @@ export function convertObj(data:{[key:string]:string}) {
  export function formatNum(value:number){
   return Math.floor(value)
   }
+
+
+  export function baseInfo(){
+      return {
+        pageUrl :location.href
+      }
+  }

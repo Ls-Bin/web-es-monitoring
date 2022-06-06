@@ -44,7 +44,6 @@ export default class webEsMonitoring {
   }
 
   report(result: any) {
-    console.log(this)
     this._plugin.report.call(this._plugin, result)
   }
 
