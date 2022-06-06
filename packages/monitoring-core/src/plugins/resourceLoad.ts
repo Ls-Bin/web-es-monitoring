@@ -1,7 +1,4 @@
 import { EsIndex } from './../enum';
-interface PluginConfig {
-  report: Function
-}
 
 interface Pf extends PerformanceEntry {
   transferSize?: number
@@ -9,17 +6,15 @@ interface Pf extends PerformanceEntry {
   nextHopProtocol?: string
 }
 
-export class resourceLoad {
-  public lazy: number
 
-  constructor({ report }: PluginConfig) {
-    this.lazy = 1000
-
+export default {
+  lazy: 1000,
+  install(options:any) {
     const resourceType = ['script', 'css', 'video', 'audio', 'img', 'image']
 
     setTimeout(() => {
       const resource = performance.getEntriesByType('resource')
-      report({
+      options.core.report({
         esIndex: EsIndex.ResourceLoad,
         createTime: new Date(),
         data: resource
@@ -31,7 +26,7 @@ export class resourceLoad {
               // 资源的名称
               name: url,
               // 资源加载耗时
-              duration: Math.floor(item.duration) ,
+              duration: Math.floor(item.duration),
               // // 资源大小
               transferSize: item.transferSize,
               // // 资源所用协议

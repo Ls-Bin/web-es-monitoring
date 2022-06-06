@@ -13,3 +13,7 @@ export function convertObj(data:{[key:string]:string}) {
     return _result.join('&');
   }
 
+
+ export function formatNum(value:number){
+  return Math.floor(value)
+  }

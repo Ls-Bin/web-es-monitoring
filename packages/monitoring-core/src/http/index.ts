@@ -1,5 +1,5 @@
 import { convertObj } from '../utils'
-import { imageRequest } from './imgRequest'
+// import { imageRequest } from './imgRequest'
 
 interface Params {
   [key: string]: any
@@ -12,8 +12,8 @@ interface Request {
 const request: Request = function (type, url, params) {
   return new Promise((resolve, reject) => {
     let xhr = new XMLHttpRequest()
-    xhr.timeout = 2
-    xhr.open(type, type === 'GET' ? `${url}?${convertObj(params)}` : url, true)
+    xhr.timeout = 1000 * 30
+    xhr.open(type, type === 'GET' ? `${url}${convertObj(params)?("?"+convertObj(params)):''}` : url, true)
     xhr.setRequestHeader('content-type', 'application/json')
     xhr.onload = function () {
       if (xhr.getResponseHeader('Content-Type')?.includes('application/json')) {
@@ -40,9 +40,9 @@ const request: Request = function (type, url, params) {
 }
 
 const get = function (url: string, params: Params) {
-  if (Image) {
-    return imageRequest(url, params)
-  }
+  // if (Image) {
+  //   return imageRequest(url, params)
+  // }
   return request('GET', url, params)
 }
 

@@ -10,8 +10,11 @@ import ReactDom from 'react-dom';
 
 import {App} from '@components/app/app';
 
-import WebEsMonitoring, { apiRequest, resourceLoad }  from 'monitoring-core'
-
+import WebEsMonitoring  from 'monitoring-core'
+import performancePlugin from 'monitoring-core/src/plugins/performance'
+import resourceLoadPlugin from 'monitoring-core/src/plugins/resourceLoad'
+import apiRequestPlugin from 'monitoring-core/src/plugins/apiRequest'
+import reportPlugin from 'monitoring-core/src/plugins/report'
 
 const webEsMonitoring = new WebEsMonitoring({
     reportUrl:'http://localhost:8080/es'
@@ -20,8 +23,12 @@ const webEsMonitoring = new WebEsMonitoring({
 /* webEsMonitoring.addFn((monitor: { data: () => any; })=>{
     console.log(monitor.data())
 }) */
-webEsMonitoring.use(apiRequest)
-webEsMonitoring.use(resourceLoad)
+// datawebEsMonitoring.use(apiRequest)
+webEsMonitoring.use(reportPlugin)
+webEsMonitoring.use(apiRequestPlugin)
+
+webEsMonitoring.use(resourceLoadPlugin)
+webEsMonitoring.use(performancePlugin)
 
 
 // eslint-disable-next-line no-restricted-globals

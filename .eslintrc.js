@@ -1,4 +1,4 @@
-const DOMGlobals = ['window', 'document']
+const DOMGlobals = [ 'document']
 const NodeGlobals = ['module', 'require']
 
 module.exports = {

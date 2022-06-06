@@ -1,8 +1,7 @@
-import { EsIndex } from './src/enum';
-import { apiRequest } from './src/monitor/apiRequest';
-import { resourceLoad } from './src/monitor/resourceLoad'
 import { Queue } from './src/utils/qunue'
-import { get, post, put } from './src/http/index'
+import Plugin from './plugin'
+import { get } from './src/http'
+
 declare interface Config {
   reportUrl: string
   lazy?: number
@@ -14,7 +13,11 @@ export default class webEsMonitoring {
   reportUrl: string
   config: Config
   lazy: number
+
+  _plugin: Plugin;
   constructor(config: Config) {
+    this._plugin = new Plugin()
+
     this.config = config
     this.lazy = config.lazy || 2000
     this.queue = new Queue()
@@ -30,47 +33,22 @@ export default class webEsMonitoring {
     //   }
     // })
 
-    setInterval(() => {
-      this.submit()
-
-    }, this.lazy)
-
     // test
     setTimeout(() => {
-      post('http://localhost:8080/test', {})
+      get('https://api.github.com/users/defunkt', {})
     }, 2000);
   }
 
-  use(func: any) {
-    new func({
-      ...this.config,
-      report: this.report.bind(this)
-    })
+  use(func: any, options?: any) {
+    this._plugin.install(func, { ...this.config, ...options,core:this,plugin:this._plugin })
   }
 
   report(result: any) {
-    this.queue.enqueue(result)
-
-
+    console.log(this)
+    this._plugin.report.call(this._plugin, result)
   }
 
-  async submit() {
-    if (this.queue.size()) {
-      const result = this.queue.front()
-      this.queue.dequeue()
-      if (result.esIndex) {
-        await post(this.reportUrl + '/' + result.esIndex + '/_doc/', result).catch(
-          async error => {
-            if (!result.errorCount || result.errorCount < 3) {
-              this.report({ ...result, errorCount: (result.errorCount || 0) + 1 })
-            }
-            console.error('request', error)
-          }
-        )
-      }
-    }
-    return Promise.resolve()
-  }
+
 }
 
-export { resourceLoad, apiRequest }
+

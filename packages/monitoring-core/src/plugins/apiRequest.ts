@@ -1,27 +1,19 @@
 import { EsIndex } from './../enum';
 /* eslint-disable no-restricted-globals */
 
-interface ReportFn {
-    (config: ApiRequestReportData): void
-}
 
-interface ApiRequestReportData {
-    esIndex: string
-    createTime: Date
-    url: string, //url
-    userAgent?: string, //浏览器版本
-    type: string, //xhr
-    eventType: string //事件类型
-    status: number, //状态码
-    duration: number, //请求耗时
-    response?: string, //响应内容
-    params?: string //参数
-}
-
-interface PluginConfig {
-    report: ReportFn
-    reportUrl: string
-}
+// interface ApiRequestReportData {
+//     esIndex: string
+//     createTime: Date
+//     url: string, //url
+//     userAgent?: string, //浏览器版本
+//     type: string, //xhr
+//     eventType: string //事件类型
+//     status: number, //状态码
+//     duration: number, //请求耗时
+//     response?: string, //响应内容
+//     params?: string //参数
+// }
 
 
 function initXHRErr() {
@@ -82,12 +74,12 @@ function initXHRErr() {
 }
 
 
-export class apiRequest {
-
-    constructor({ report, reportUrl }: PluginConfig) {
+export default {
+    install(options:any){
 
         initXHRErr()
 
+        const reportUrl = options.core.reportUrl
         const ajaxRecordArr: any[] = []
         window.addEventListener('ajaxLoadStart', function (e: any) {
             ajaxRecordArr.push({
@@ -106,10 +98,10 @@ export class apiRequest {
                     const url = XHR.responseURL
                     record.isLoadEnd = true
 
-                    // exclude es report xhr 
+                    // exclude es report xhr
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
-                        report({
+                        options.core.report({
                             esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
@@ -143,10 +135,10 @@ export class apiRequest {
                     const url = XHR._url
                     record.isLoadEnd = true
 
-                    // // exclude es report xhr 
+                    // // exclude es report xhr
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
-                        report({
+                        options.core.report({
                             esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
@@ -164,6 +156,6 @@ export class apiRequest {
 
             })
         });
-
     }
 }
+

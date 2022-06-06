@@ -10,6 +10,11 @@ use Elasticsearch + kibana
     * web white screen
 
 
+# docker-compose install
+ 1. `cd /docker`
+ 2. `$ docker-compose -f docker-compose.yml up -d`
+
+
 # elasticsearch install
 1. `$ sudo docker pull elasticsearch:7.17.1`
 1. `$ sudo docker images`
