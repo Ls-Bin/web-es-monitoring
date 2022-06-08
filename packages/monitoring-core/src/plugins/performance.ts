@@ -1,5 +1,5 @@
 import { EsIndex } from '../enum'
-import { formatNum, isCanReport } from '../utils'
+import { formatNum, checkSampling, baseInfo } from '../utils'
 import webEsMonitoring, { Options } from '../../index'
 
 function getPerformance() {
@@ -71,21 +71,28 @@ function getPerformance() {
 
 
 export default {
-  install(core:webEsMonitoring,options: Options) {
-    if (isCanReport(options.sampleRate)) return
+  install(core: webEsMonitoring, options: Options) {
+    let isCanReport = checkSampling(options.sampleRate)
+    if (!isCanReport) return
 
     if ('performance' in window) {
       if ('PerformanceObserver' in window) {
-        const observer = new PerformanceObserver((entries)=>{
+        const observer = new PerformanceObserver((entries) => {
           const _performance = getPerformance() as any
-          core.report({
+          const reportData = Object.assign({}, baseInfo(), {
             _esIndex: EsIndex.Performance,
             createTime: new Date(),
             ..._performance,
           })
+
+          if (options.filter) isCanReport = options.filter(reportData);
+
+          if (isCanReport) {
+            core.report(reportData)
+          }
         })
 
-        observer.observe({entryTypes: ['paint','navigation']})
+        observer.observe({ entryTypes: ['paint', 'navigation'] })
 
       } else {
         // todo

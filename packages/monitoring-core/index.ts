@@ -5,7 +5,8 @@ import { get } from './src/http'
 export interface Options {
   reportUrl: string
   lazy?: number
-  sampleRate:number //采样率
+  sampleRate?:number //采样率
+  filter?(data:any):boolean
 }
 
 const defaultOptions:Options={

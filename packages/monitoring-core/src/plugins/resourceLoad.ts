@@ -1,6 +1,6 @@
 import { EsIndex } from './../enum';
 import webEsMonitoring, { Options } from '../../index'
-import { isCanReport } from '../utils'
+import { baseInfo, checkSampling as checkSampling } from '../utils'
 
 interface Pf extends PerformanceEntry {
   transferSize?: number
@@ -11,17 +11,19 @@ interface Pf extends PerformanceEntry {
 
 export default {
   lazy: 2000,
-  install(core:webEsMonitoring,options:Options) {
-    if(isCanReport(options.sampleRate))return
+  install(core: webEsMonitoring, options: Options) {
+    let isCanReport = checkSampling(options.sampleRate)
+    if (!isCanReport) return
 
     const resourceType = ['script', 'css', 'video', 'audio', 'img', 'image']
 
     setTimeout(() => {
       const resource = performance.getEntriesByType('resource')
-      core.report({
+
+      let reportData = Object.assign({}, baseInfo(), {
         _esIndex: EsIndex.ResourceLoad,
         createTime: new Date(),
-        data: resource
+        resource: resource
           .filter((d: Pf) => resourceType.includes(d.initiatorType || ''))
           .map((item: Pf) => {
             const url = item.name
@@ -40,6 +42,15 @@ export default {
             }
           })
       })
+
+
+      if (options.filter) isCanReport = options.filter(reportData);
+
+      if (isCanReport) {
+        core.report(reportData)
+      }
+
+
     }, this.lazy)
   }
 }

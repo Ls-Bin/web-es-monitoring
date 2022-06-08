@@ -27,7 +27,9 @@ const webEsMonitoring = new WebEsMonitoring({
 webEsMonitoring.use(reportPlugin)
 webEsMonitoring.use(apiRequestPlugin)
 
-webEsMonitoring.use(resourceLoadPlugin)
+webEsMonitoring.use(resourceLoadPlugin,{filter:function(data: any){
+    return true
+}})
 webEsMonitoring.use(performancePlugin)
 
 

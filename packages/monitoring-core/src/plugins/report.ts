@@ -1,11 +1,9 @@
 import { post } from '../http/index'
-import { baseInfo, isCanReport } from '../utils'
 
 // @ts-ignore
 import { Browser } from '../utils/browser'
 import webEsMonitoring, { Options } from '../../index'
 
-const browserInfo = new Browser()
 
 export default {
   install(core: webEsMonitoring, options: Options) {
@@ -13,11 +11,10 @@ export default {
     const report = (_opt: any) => {
       return async (result: any) => {
 
-        if (isCanReport(options.sampleRate)) return Promise.resolve()
         const _esIndex = result._esIndex
         delete result._esIndex
 
-        const _params = Object.assign({}, baseInfo(), browserInfo, result)
+        const _params = Object.assign({},  result)
 
         await post(_opt.reportUrl + '/' + _esIndex + '/_doc/', _params).catch(
           async error => {

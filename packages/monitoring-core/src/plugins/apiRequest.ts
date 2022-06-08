@@ -1,6 +1,6 @@
 import { EsIndex } from './../enum';
 import webEsMonitoring, { Options } from '../../index'
-import { isCanReport } from '../utils'
+import { baseInfo, checkSampling } from '../utils'
 /* eslint-disable no-restricted-globals */
 
 
@@ -77,8 +77,9 @@ function initXHRErr() {
 
 
 export default {
-    install(core:webEsMonitoring,options:Options){
-        if (isCanReport(options.sampleRate)) return
+    install(core: webEsMonitoring, options: Options) {
+        let isCanReport = checkSampling(options.sampleRate)
+        if (!isCanReport) return
 
         initXHRErr()
 
@@ -103,8 +104,7 @@ export default {
 
                     // exclude es report xhr
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
-
-                        core.report({
+                        const reportData = Object.assign({}, baseInfo(), {
                             _esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
@@ -117,6 +117,12 @@ export default {
                             // response: '',
                             // params: ''
                         })
+
+                        if (options.filter) isCanReport = options.filter(reportData);
+
+                        if (isCanReport) {
+                          core.report(reportData)
+                        }
                     }
 
                     return
@@ -140,8 +146,7 @@ export default {
 
                     // // exclude es report xhr
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
-
-                        core.report({
+                        const reportData = Object.assign({}, baseInfo(), {
                             _esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
@@ -150,6 +155,12 @@ export default {
                             status: 0,
                             duration: XHR.timeout,
                         })
+
+                        if (options.filter) isCanReport = options.filter(reportData);
+
+                        if (isCanReport) {
+                          core.report(reportData)
+                        }
                     }
 
                     return
