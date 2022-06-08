@@ -1,33 +1,40 @@
-
 import { post } from '../http/index'
-import { baseInfo } from '../utils'
+import { baseInfo, isCanReport } from '../utils'
 
-import {Browser} from '../utils/browser' 
+// @ts-ignore
+import { Browser } from '../utils/browser'
+import webEsMonitoring, { Options } from '../../index'
 
-const browserInfo = new Browser();
+const browserInfo = new Browser()
 
 export default {
-  install(options: any) {
+  install(core: webEsMonitoring, options: Options) {
+    //FIXME:需要用队列来优化请求，10秒批量上传或者链式1秒调用一个请求
     const report = (_opt: any) => {
       return async (result: any) => {
+
+        if (isCanReport(options.sampleRate)) return Promise.resolve()
         const _esIndex = result._esIndex
         delete result._esIndex
-        
-        const _params = Object.assign({}, baseInfo(),browserInfo,result)
+
+        const _params = Object.assign({}, baseInfo(), browserInfo, result)
 
         await post(_opt.reportUrl + '/' + _esIndex + '/_doc/', _params).catch(
           async error => {
             if (!result.errorCount || result.errorCount < 3) {
-              await setTimeout(async () => {
-                await options.core.report({ ...result, errorCount: (result.errorCount || 0) + 1 })
-              }, 2000);
+              setTimeout(async () => {
+                await core.report({
+                  ...result,
+                  errorCount: (result.errorCount || 0) + 1
+                })
+              }, 2000)
             }
           }
         )
       }
     }
 
-    options.plugin.register('report', report(options))
+    core._plugin.register('report', report(options))
 
     // this.prototype.report = report(options)
     // core.prototype.onReport = async function () {
@@ -40,5 +47,5 @@ export default {
     //   }
     //   return Promise.resolve()
     // }
-  },
+  }
 } as any

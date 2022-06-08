@@ -2,30 +2,36 @@ import { Queue } from './src/utils/qunue'
 import Plugin from './plugin'
 import { get } from './src/http'
 
-declare interface Config {
+export interface Options {
   reportUrl: string
   lazy?: number
+  sampleRate:number //采样率
+}
+
+const defaultOptions:Options={
+  reportUrl:'/es',
+  sampleRate:100,
 }
 
 export default class webEsMonitoring {
   public fn!: Function
   queue: Queue
   reportUrl: string
-  config: Config
+  options: Options
   lazy: number
 
   _plugin: Plugin;
-  constructor(config: Config) {
+  constructor(options: Options) {
     this._plugin = new Plugin()
 
-    this.config = config
-    this.lazy = config.lazy || 2000
+    this.options =Object.assign({},defaultOptions,options)
+    this.lazy = options.lazy || 2000
     this.queue = new Queue()
 
-    this.reportUrl = config.reportUrl
+    this.reportUrl = options.reportUrl
 
     // if request error log has "cluster_block_exception read_only_allow_delete"
-    // put(config.reportUrl + '/_all/_settings', {
+    // put(options.reportUrl + '/_all/_settings', {
     //   index: {
     //     blocks: {
     //       read_only_allow_delete: 'false'
@@ -40,7 +46,7 @@ export default class webEsMonitoring {
   }
 
   use(func: any, options?: any) {
-    this._plugin.install(func, { ...this.config, ...options,core:this,plugin:this._plugin })
+    this._plugin.install(func,this, { ...this.options, ...options })
   }
 
   report(result: any) {

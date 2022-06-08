@@ -1,11 +1,8 @@
-
-
-
-
+import webEsMonitoring,{Options} from './index'
 
 
 export interface PluginsInterface {
-  install(plugin: { install: () => void }, config: any): void
+  install(plugin: { install: () => void },core:webEsMonitoring, options: Options): void
   apply?(hookName: string, handler: Function): void
   get?(hookName: string): void
   report(result: any): void
@@ -23,8 +20,8 @@ export default class Plugin implements PluginsInterface {
   }
 
 
-  install(plugin: { install: (_opt: any) => void }, options: any) {
-    plugin.install(options)
+  install(plugin: { install: (core:webEsMonitoring,_opt: any) => void },core:webEsMonitoring, options: Options) {
+    plugin.install(core,options)
   }
 
   // apply(hookName: string, handler: Function) {

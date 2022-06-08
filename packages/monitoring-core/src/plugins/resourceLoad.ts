@@ -1,4 +1,6 @@
 import { EsIndex } from './../enum';
+import webEsMonitoring, { Options } from '../../index'
+import { isCanReport } from '../utils'
 
 interface Pf extends PerformanceEntry {
   transferSize?: number
@@ -9,12 +11,14 @@ interface Pf extends PerformanceEntry {
 
 export default {
   lazy: 2000,
-  install(options:any) {
+  install(core:webEsMonitoring,options:Options) {
+    if(isCanReport(options.sampleRate))return
+
     const resourceType = ['script', 'css', 'video', 'audio', 'img', 'image']
 
     setTimeout(() => {
       const resource = performance.getEntriesByType('resource')
-      options.core.report({
+      core.report({
         _esIndex: EsIndex.ResourceLoad,
         createTime: new Date(),
         data: resource

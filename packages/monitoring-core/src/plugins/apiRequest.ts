@@ -1,4 +1,6 @@
 import { EsIndex } from './../enum';
+import webEsMonitoring, { Options } from '../../index'
+import { isCanReport } from '../utils'
 /* eslint-disable no-restricted-globals */
 
 
@@ -75,11 +77,12 @@ function initXHRErr() {
 
 
 export default {
-    install(options:any){
+    install(core:webEsMonitoring,options:Options){
+        if (isCanReport(options.sampleRate)) return
 
         initXHRErr()
 
-        const reportUrl = options.core.reportUrl
+        const reportUrl = core.reportUrl
         const ajaxRecordArr: any[] = []
         window.addEventListener('ajaxLoadStart', function (e: any) {
             ajaxRecordArr.push({
@@ -101,7 +104,7 @@ export default {
                     // exclude es report xhr
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
-                        options.core.report({
+                        core.report({
                             _esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,
@@ -138,7 +141,7 @@ export default {
                     // // exclude es report xhr
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
 
-                        options.core.report({
+                        core.report({
                             _esIndex: EsIndex.ApiRequest,
                             createTime: new Date(),
                             url: url,

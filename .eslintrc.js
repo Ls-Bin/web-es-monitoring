@@ -6,7 +6,7 @@ module.exports = {
   parserOptions: {
     sourceType: 'module'
   },
-  plugins: ["jest"],
+  plugins: ['jest', '@typescript-eslint'],
   rules: {
     'no-debugger': 'error',
     'no-unused-vars': [
