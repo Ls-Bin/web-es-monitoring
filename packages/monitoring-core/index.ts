@@ -1,4 +1,4 @@
-import { Queue } from './src/utils/qunue'
+
 import Plugin from './plugin'
 import { get } from './src/http'
 
@@ -16,7 +16,6 @@ const defaultOptions:Options={
 
 export default class webEsMonitoring {
   public fn!: Function
-  queue: Queue
   reportUrl: string
   options: Options
   lazy: number
@@ -27,7 +26,6 @@ export default class webEsMonitoring {
 
     this.options =Object.assign({},defaultOptions,options)
     this.lazy = options.lazy || 2000
-    this.queue = new Queue()
 
     this.reportUrl = options.reportUrl
 
@@ -52,6 +50,13 @@ export default class webEsMonitoring {
 
   report(result: any) {
     this._plugin.report.call(this._plugin, result)
+  }
+  /**
+   * 延迟提交 report
+   * @param result 
+   */
+  reportLazy(result: any) {
+    this._plugin.reportLazy.call(this._plugin, result)
   }
 
 

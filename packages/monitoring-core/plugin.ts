@@ -6,16 +6,19 @@ export interface PluginsInterface {
   apply?(hookName: string, handler: Function): void
   get?(hookName: string): void
   report(result: any): void
+  reportLazy(result: any): void
 }
 
 
 export default class Plugin implements PluginsInterface {
 
-  hooks: { report: Function, }
+  hooks: { report: Function,reportLazy:Function }
   constructor() {
 
     this.hooks = {
       report: function () { },
+      reportLazy: function () { },
+      
     }
   }
 
@@ -35,8 +38,11 @@ export default class Plugin implements PluginsInterface {
   report(result: any) {
     this.hooks.report(result)
   }
+  reportLazy(result: any) {
+    this.hooks.reportLazy(result)
+  }
 
-  register(fnName: 'report', fn: Function) {
+  register(fnName: 'report'|'reportLazy', fn: Function) {
     this.hooks[fnName] = fn as any
   }
 }

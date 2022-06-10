@@ -6,7 +6,7 @@ interface Params {
 }
 
 interface Request {
-  (type: string, url: string, params: Params): Promise<any>
+  (type: string, url: string, params: Params|any): Promise<any>
 }
 
 const request: Request = function (type, url, params) {
@@ -33,7 +33,7 @@ const request: Request = function (type, url, params) {
     if (type === 'GET') {
       xhr.send()
     } else {
-      xhr.send(JSON.stringify(params))
+      xhr.send(params)
     }
 
   })
@@ -46,7 +46,7 @@ const get = function (url: string, params: Params) {
   return request('GET', url, params)
 }
 
-const post = function (url: string, params: Params) {
+const post = function (url: string, params: Params|string) {
   return request('POST', url, params)
 }
 const put = function (url: string, params: Params) {
