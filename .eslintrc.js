@@ -1,73 +1,47 @@
-const DOMGlobals = [ 'document']
-const NodeGlobals = ['module', 'require']
-
+const path = require('path');
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    sourceType: 'module'
-  },
-  plugins: ['jest'],
-  rules: {
-    'no-debugger': 'error',
-    'no-unused-vars': [
-      'error',
-      // we are only using this rule to check for unused arguments since TS
-      // catches unused variables but not args.
-      { varsIgnorePattern: '.*', args: 'none' }
+    parser: '@typescript-eslint/parser', // Specifies the ESLint parser
+    plugins: ['@typescript-eslint', 'react'],
+    env: {
+        browser: true,
+        jest: true,
+    },
+    extends: [
+        'plugin:@typescript-eslint/recommended', // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+        'prettier',
     ],
-    // most of the codebase are expected to be env agnostic
-    'no-restricted-globals': ['error', ...DOMGlobals, ...NodeGlobals],
-    // since we target ES2015 for baseline support, we need to forbid object
-    // rest spread usage in destructure as it compiles into a verbose helper.
-    // TS now compiles assignment spread into Object.assign() calls so that
-    // is allowed.
-    'no-restricted-syntax': [
-      'error',
-      'ObjectPattern > RestElement',
-    ]
-  },
-  overrides: [
-    // tests, no restrictions (runs in Node / jest with jsdom)
-    {
-      files: ['**/__tests__/**', 'test-dts/**'],
-      rules: {
-        'no-restricted-globals': 'off',
-        'no-restricted-syntax': 'off',
-        'jest/no-disabled-tests': 'error',
-        'jest/no-focused-tests': 'error'
-      }
+    parserOptions: {
+        project: path.resolve(__dirname, './tsconfig.json'),
+        tsconfigRootDir: __dirname,
+        ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
+        sourceType: 'module', // Allows for the use of imports
+        ecmaFeatures: {
+            jsx: true, // Allows for the parsing of JSX
+        },
     },
-    // shared, may be used in any env
-    {
-      files: ['packages/shared/**'],
-      rules: {
-        'no-restricted-globals': 'off'
-      }
+    rules: {
+        // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
+        // e.g. "@typescript-eslint/explicit-function-return-type": "off",
+        '@typescript-eslint/explicit-function-return-type': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        // These rules don't add much value, are better covered by TypeScript and good definition files
+        'react/no-direct-mutation-state': 'off',
+        'react/no-deprecated': 'off',
+        'react/no-string-refs': 'off',
+        'react/require-render-return': 'off',
+
+        'react/jsx-filename-extension': [
+            'warn',
+            {
+                extensions: ['.jsx', '.tsx'],
+            },
+        ], // also want to use with ".tsx"
+        'react/prop-types': 'off', // Is this incompatible with TS props type?
     },
-    // Packages targeting DOM
-    {
-      files: ['packages/{vue,vue-compat,runtime-dom}/**'],
-      rules: {
-        'no-restricted-globals': ['error', ...NodeGlobals]
-      }
+    settings: {
+        react: {
+            version: 'detect', // Tells eslint-plugin-react to automatically detect the version of React to use
+        },
     },
-    // Packages targeting Node
-    {
-      files: [
-        'packages/{compiler-sfc,compiler-ssr,server-renderer,reactivity-transform}/**'
-      ],
-      rules: {
-        'no-restricted-globals': ['error', ...DOMGlobals],
-        'no-restricted-syntax': 'off'
-      }
-    },
-    // Private package, browser only + no syntax restrictions
-    {
-      files: ['packages/template-explorer/**', 'packages/sfc-playground/**'],
-      rules: {
-        'no-restricted-globals': ['error', ...NodeGlobals],
-        'no-restricted-syntax': 'off'
-      }
-    }
-  ]
-}
+};
