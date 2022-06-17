@@ -23,11 +23,12 @@ const request: Request = function (type, url, params) {
       return resolve(xhr.responseText)
     }
     xhr.onerror = function () {
-      reject(xhr)
+      reject({reportError:xhr})
+
     }
 
     xhr.ontimeout = function () {
-      reject(xhr)
+      reject({reportError:xhr})
     }
 
     if (type === 'GET') {

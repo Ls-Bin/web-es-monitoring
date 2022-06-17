@@ -1,16 +1,18 @@
 export function imageRequest(url: string, params: { [key: string]: any }) {
-  const image = new Image()
+  const logId: any = 'report_log_' + new Date().getTime()
+  let image = (window[logId] = new Image() as any)
 
   return new Promise((resolve, reject) => {
-    image.onload = function (res) {
-      console.log('imageRequest', res)
+    image.onload = image.onerror = function (res: any) {
       resolve(res)
+      window[logId] = null as any;
+      image = null
     }
-    image.onerror = function (e) {
-      console.error('imageRequest', e)
-      reject(e)
+    image.onerror = function (e:any) {
+      // reject({reportError:e})
+      window[logId] = null as any;
+      image = null
     }
-
     image.src =
       url +
       '?' +
@@ -18,6 +20,4 @@ export function imageRequest(url: string, params: { [key: string]: any }) {
         .map(key => [key] + '=' + params[key])
         .join('&')
   })
-
-
 }

@@ -1,5 +1,5 @@
 import { EsIndex } from '../enum'
-import { formatNum, checkSampling, baseInfo } from '../utils'
+import { formatNum, checkSampling, baseInfo, formatDate } from '../utils'
 import webEsMonitoring, { Options } from '../../index'
 
 export default {
@@ -10,7 +10,7 @@ export default {
     function _reportGlobalError(event:ErrorEvent){
           const reportData = Object.assign({}, baseInfo(), {
             _esIndex: EsIndex.GlobalError,
-            createTime: new Date(),
+            date: formatDate(),
             errorType:'js',
             colno:event.colno,
             lineno:event.lineno,
@@ -23,10 +23,10 @@ export default {
           if (options.filter) isCanReport = options.filter(reportData);
 
           if (isCanReport) {
-            core.report(reportData)
+            core.reportLazy(reportData)
           }
     }
- 
+
     // js error
     window.addEventListener('error', (error: any) => {
       console.error('listener:error', error)
@@ -37,9 +37,13 @@ export default {
 
     // promise error
     window.addEventListener('unhandledrejection', (error) => {
-      console.error('listener:unhandledrejection', error)
 
       let reason = error.reason
+
+      // 过滤report请求错误,阻止递归请求错误
+      if(reason.hasOwnProperty('reportError')){
+        return
+      }
 
       if(reason.constructor === Object){
         try{
@@ -49,9 +53,11 @@ export default {
         }
       }
 
+      console.error('listener:unhandledrejection', error)
+
       const reportData = Object.assign({}, baseInfo(), {
         _esIndex: EsIndex.GlobalError,
-        createTime: new Date(),
+        date: formatDate(),
         errorType:'promise',
         message:reason,
         timeStamp:formatNum(error.timeStamp)
@@ -60,7 +66,7 @@ export default {
       if (options.filter) isCanReport = options.filter(reportData);
 
       if (isCanReport) {
-        core.report(reportData)
+        core.reportLazy(reportData)
       }
     })
 

@@ -1,6 +1,6 @@
 import { EsIndex } from './../enum';
 import webEsMonitoring, { Options } from '../../index'
-import { baseInfo, checkSampling as checkSampling } from '../utils'
+import { baseInfo, checkSampling as checkSampling, formatDate } from '../utils'
 
 interface Pf extends PerformanceEntry {
   transferSize?: number
@@ -20,9 +20,9 @@ export default {
     setTimeout(() => {
       const resource = performance.getEntriesByType('resource')
 
-      let reportData = Object.assign({}, baseInfo(), {
+      const reportData = Object.assign({}, baseInfo(), {
         _esIndex: EsIndex.ResourceLoad,
-        createTime: new Date(),
+        date: formatDate(),
         resource: resource
           .filter((d: Pf) => resourceType.includes(d.initiatorType || ''))
           .map((item: Pf) => {
@@ -47,7 +47,7 @@ export default {
       if (options.filter) isCanReport = options.filter(reportData);
 
       if (isCanReport) {
-        core.report(reportData)
+        core.reportLazy(reportData)
       }
 
 

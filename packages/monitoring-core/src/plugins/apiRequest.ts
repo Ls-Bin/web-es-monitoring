@@ -1,12 +1,12 @@
 import { EsIndex } from './../enum';
 import webEsMonitoring, { Options } from '../../index'
-import { baseInfo, checkSampling } from '../utils'
+import { baseInfo, checkSampling, formatDate } from '../utils'
 /* eslint-disable no-restricted-globals */
 
 
 // interface ApiRequestReportData {
 //     _esIndex: string
-//     createTime: Date
+//     date: Date
 //     url: string, //url
 //     userAgent?: string, //浏览器版本
 //     type: string, //xhr
@@ -25,7 +25,7 @@ function initXHRErr() {
 
         function CustomEvent(event: string, params: any) {
             params = params || { bubbles: false, cancelable: false, detail: undefined };
-            let evt = document.createEvent('CustomEvent');
+            const evt = document.createEvent('CustomEvent');
             evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
             return evt;
         }
@@ -106,7 +106,7 @@ export default {
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
                         const reportData = Object.assign({}, baseInfo(), {
                             _esIndex: EsIndex.ApiRequest,
-                            createTime: new Date(),
+                            date: formatDate(),
                             url: url,
                             type: 'xhr',
                             eventType: 'loadEnd',
@@ -121,7 +121,7 @@ export default {
                         if (options.filter) isCanReport = options.filter(reportData);
 
                         if (isCanReport) {
-                          core.report(reportData)
+                          core.reportLazy(reportData)
                         }
                     }
 
@@ -148,7 +148,7 @@ export default {
                     if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
                         const reportData = Object.assign({}, baseInfo(), {
                             _esIndex: EsIndex.ApiRequest,
-                            createTime: new Date(),
+                            date: formatDate() ,
                             url: url,
                             type: 'xhr',
                             eventType: 'timeout',
@@ -159,7 +159,7 @@ export default {
                         if (options.filter) isCanReport = options.filter(reportData);
 
                         if (isCanReport) {
-                          core.report(reportData)
+                          core.reportLazy(reportData)
                         }
                     }
 

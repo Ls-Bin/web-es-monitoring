@@ -1,5 +1,5 @@
 import { EsIndex } from '../enum'
-import { formatNum, checkSampling, baseInfo } from '../utils'
+import { formatNum, checkSampling, baseInfo, formatDate } from '../utils'
 import webEsMonitoring, { Options } from '../../index'
 
 function getPerformance() {
@@ -81,7 +81,7 @@ export default {
           const _performance = getPerformance() as any
           const reportData = Object.assign({}, baseInfo(), {
             _esIndex: EsIndex.Performance,
-            createTime: new Date(),
+            date: formatDate(),
             ..._performance,
           })
 

@@ -2,7 +2,7 @@ version: '3'
 services:
   elasticsearch:
     image: elasticsearch:7.17.1
-    container_name: "elasticsearch2"
+    container_name: "elasticsearch"
     ports:
       - 9200:9200
       - 9300:9300
@@ -15,7 +15,7 @@ services:
 
   kibana:
     image: kibana:7.17.1
-    container_name: kibana2
+    container_name: kibana
     depends_on:
       - elasticsearch
     ports:
@@ -25,7 +25,7 @@ services:
       # - ./kibana/data:/usr/share/kibana/data
 
   nginx:
-    image: nginx
+    image: fabiocicerchia/nginx-lua
     container_name: nginx
     ports:
       - 443:443
