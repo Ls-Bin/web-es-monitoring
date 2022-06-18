@@ -1,7 +1,5 @@
 
 import Plugin from './plugin'
-import { get } from './src/http'
-
 export interface Options {
   reportUrl: string
   lazy?: number
@@ -38,10 +36,7 @@ export default class webEsMonitoring {
     //   }
     // })
 
-    // test
-    setTimeout(() => {
-      get('https://api.github.com/users/defunkt', {})
-    }, 2000);
+
   }
 
   use(func: any, options?: any) {
@@ -53,7 +48,7 @@ export default class webEsMonitoring {
   }
   /**
    * 延迟提交 report
-   * @param result 
+   * @param result
    */
   reportLazy(result: any) {
     this._plugin.reportLazy.call(this._plugin, result)

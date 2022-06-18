@@ -76,7 +76,6 @@ const initReport = (_opt: any) => {
 async function bulkRequest(reportDataArray: ReportData[],options:ReportOptions) {
   if(!reportDataArray.length)return
 
-  console.log('reportDataArray',reportDataArray)
   const esBlukDatas: string[] = []
   for (const item of reportDataArray) {
     esBlukDatas.push(JSON.stringify({ create: { _index: item._esIndex } }))
