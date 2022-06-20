@@ -23,8 +23,14 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - run: npm ci
-      - run: npm test
+      -name: 开始构建
+       run: |
+          pnpm install
+
+        # 执行构建步骤
+        - name: 构建
+       run: |
+          pnpm run build
 
   publish-npm:
     needs: build
@@ -37,4 +43,4 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
