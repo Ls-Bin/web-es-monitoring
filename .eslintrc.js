@@ -18,6 +18,10 @@ module.exports = {
   rules: {
     // 以下为替换原有eslint
     'prettier/prettier': 'error',
+    'no-underscore-dangle': 0,
+    '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    'import/no-unresolved': 0,
   },
   parserOptions: {
     parser: 'babel-eslint',

@@ -1,14 +1,16 @@
-const path = require('path');
-const babel = require('rollup-plugin-babel');
-const { nodeResolve } = require('@rollup/plugin-node-resolve');
-const pkg = require('./package.json');
+const path = require('path')
+const babel = require('rollup-plugin-babel')
+const { nodeResolve } = require('@rollup/plugin-node-resolve')
+const typescript = require('rollup-plugin-typescript2')
+const pkg = require('./package.json')
 
-const extensions = ['.js', '.ts'];
+const extensions = ['.js', '.ts']
 
-const resolve = function(...args) {
-  return path.resolve(__dirname, ...args);
-};
-const version = process.env.VERSION || require('../package.json').version
+const resolve = function (...args) {
+  return path.resolve(__dirname, ...args)
+}
+const version = process.env.VERSION || require('./package.json').version
+
 const banner =
   '/*!\n' +
   ` * web-es-monitoring v${version}\n` +
@@ -17,12 +19,13 @@ const banner =
   ' */'
 
 module.exports = {
-  input: resolve('./monitoring-core/src/index.ts'),
+  input: resolve('./packages/monitoring-core/src/index.ts'),
   output: {
     file: resolve('./', pkg.main),
     format: 'esm',
   },
   plugins: [
+    typescript(),
     nodeResolve({
       extensions,
       modulesOnly: true,
@@ -32,5 +35,5 @@ module.exports = {
       extensions,
     }),
   ],
-  banner
-};
+  banner,
+}
