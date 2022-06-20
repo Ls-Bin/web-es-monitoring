@@ -19,25 +19,28 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12
-      -name: 开始构建
-       run: |
-          pnpm install
+      - uses: actions/checkout@v2
 
-        # 执行构建步骤
-        - name: 构建
-       run: |
-          pnpm run build
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Set node version to 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - run: pnpm install
+
+      - name: Run unit tests
+        run: pnpm run build
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
