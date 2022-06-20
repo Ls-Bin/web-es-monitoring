@@ -10,7 +10,7 @@ import ReactDom from 'react-dom';
 
 import {App} from '@components/app/app';
 
-import WebEsMonitoring from 'monitoring-core';
+import WebEsMonitoring from 'monitoring-core/src';
 import performancePlugin from 'monitoring-core/src/plugins/performance';
 import globalErrorPlugin from 'monitoring-core/src/plugins/globalError';
 import resourceLoadPlugin from 'monitoring-core/src/plugins/resourceLoad';

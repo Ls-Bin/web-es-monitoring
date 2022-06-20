@@ -2,7 +2,7 @@ import { post } from '../http/index'
 import { Queue } from '../../src/utils/qunue'
 // @ts-ignore
 import { Browser } from '../utils/browser'
-import webEsMonitoring, { Options } from '../../index'
+import webEsMonitoring, { Options } from '../index'
 import { imageRequest } from '../http/imgRequest'
 
 export interface ReportData {

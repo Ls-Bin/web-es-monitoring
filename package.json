@@ -1,12 +1,13 @@
 {
   "name": "web-es-monitoring",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/web-es-monitoring.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint-staged:js": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "build": "rollup -c"
   },
   "husky": {
     "hooks": {
@@ -21,13 +22,21 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "~7.16.12",
+    "@babel/preset-env": "~7.16.11",
+    "@babel/preset-typescript": "^7.17.12",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-node-resolve": "^13.3.0",
     "@typescript-eslint/eslint-plugin": "^5.25.0",
     "@typescript-eslint/parser": "^5.25.0",
     "eslint": "^8.16.0",
+    "eslint-config-prettier": "~8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.0",
     "prettier": "~2.5.1",
+    "rollup": "^2.75.6",
+    "rollup-plugin-babel": "^4.4.0",
     "typescript": "^4.6.4"
   },
   "dependencies": {

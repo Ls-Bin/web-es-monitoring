@@ -1,6 +1,6 @@
 import { EsIndex } from '../enum'
 import { formatNum, checkSampling, baseInfo, formatDate } from '../utils'
-import webEsMonitoring, { Options } from '../../index'
+import webEsMonitoring, { Options } from '../index'
 
 export default {
   install(core: webEsMonitoring, options: Options) {

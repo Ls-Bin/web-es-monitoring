@@ -1,5 +1,5 @@
 import { EsIndex } from './../enum';
-import webEsMonitoring, { Options } from '../../index'
+import webEsMonitoring, { Options } from '../index'
 import { baseInfo, checkSampling as checkSampling, formatDate } from '../utils'
 
 interface Pf extends PerformanceEntry {

@@ -1,5 +1,5 @@
 import { EsIndex } from './../enum'
-import webEsMonitoring, { Options } from '../../index'
+import webEsMonitoring, { Options } from '../index'
 import { baseInfo, checkSampling, formatDate } from '../utils'
 /* eslint-disable no-restricted-globals */
 
