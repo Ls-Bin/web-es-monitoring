@@ -2,15 +2,15 @@
 import { Browser } from './browser'
 
 export function convertObj(data: { [key: string]: string }) {
-  let _result = []
-  for (let key in data) {
-    let value = data[key] as any
+  const _result = []
+  for (const key in data) {
+    const value = data[key] as any
     if (value.constructor === Array) {
       value.forEach(function (_value: string) {
-        _result.push(key + '=' + _value)
+        _result.push(`${key}=${_value}`)
       })
     } else {
-      _result.push(key + '=' + value)
+      _result.push(`${key}=${value}`)
     }
   }
   return _result.join('&')
@@ -22,7 +22,7 @@ export function formatNum(value: number) {
 
 const uid = generateUUID()
 export function baseInfo(): {
-  uid:string
+  uid: string
   pageUrl: string
   browser: string
   device: string
@@ -32,13 +32,12 @@ export function baseInfo(): {
   os: string
   osVersion: string
   version: string
-
 } {
   const browserData = new Browser() as any
   return {
     uid,
     pageUrl: location.href,
-    ...browserData
+    ...browserData,
   }
 }
 
@@ -51,9 +50,9 @@ export function checkSampling(sampleRate = 100) {
 }
 
 function generateUUID() {
-  let d = new Date().getTime(),
-    d2 = (performance && performance.now && performance.now() * 1000) || 0
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+  let d = new Date().getTime()
+  let d2 = (performance && performance.now && performance.now() * 1000) || 0
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
     let r = Math.random() * 16
     if (d > 0) {
       r = (d + r) % 16 | 0
@@ -66,6 +65,6 @@ function generateUUID() {
   })
 }
 
-export function formatDate(){
+export function formatDate() {
   return new Date()
 }

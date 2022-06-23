@@ -18,12 +18,12 @@
 //     }
 // }(typeof self !== 'undefined' ? self : this, function (root) {
 
-let root = window
-let _window = root || {}
-let _navigator = typeof root.navigator != 'undefined' ? root.navigator : {}
-let _mime = function (option, value) {
-  let mimeTypes = _navigator.mimeTypes
-  for (let mt in mimeTypes) {
+const root = window
+const _window = root || {}
+const _navigator = typeof root.navigator !== 'undefined' ? root.navigator : {}
+const _mime = function (option, value) {
+  const { mimeTypes } = _navigator
+  for (const mt in mimeTypes) {
     if (mimeTypes[mt][option] == value) {
       return true
     }
@@ -33,23 +33,19 @@ let _mime = function (option, value) {
 
 export class Browser {
   constructor(userAgent) {
-    let u = userAgent || _navigator.userAgent || {}
-    let match = {
-      //内核
+    const u = userAgent || _navigator.userAgent || {}
+    const match = {
+      // 内核
       Trident: u.indexOf('Trident') > -1 || u.indexOf('NET CLR') > -1,
       Presto: u.indexOf('Presto') > -1,
       WebKit: u.indexOf('AppleWebKit') > -1,
       Gecko: u.indexOf('Gecko/') > -1,
       KHTML: u.indexOf('KHTML/') > -1,
-      //浏览器
+      // 浏览器
       Safari: u.indexOf('Safari') > -1,
       Chrome: u.indexOf('Chrome') > -1 || u.indexOf('CriOS') > -1,
       IE: u.indexOf('MSIE') > -1 || u.indexOf('Trident') > -1,
-      Edge:
-        u.indexOf('Edge') > -1 ||
-        u.indexOf('Edg/') > -1 ||
-        u.indexOf('EdgA') > -1 ||
-        u.indexOf('EdgiOS') > -1,
+      Edge: u.indexOf('Edge') > -1 || u.indexOf('Edg/') > -1 || u.indexOf('EdgA') > -1 || u.indexOf('EdgiOS') > -1,
       Firefox: u.indexOf('Firefox') > -1 || u.indexOf('FxiOS') > -1,
       'Firefox Focus': u.indexOf('Focus') > -1,
       Chromium: u.indexOf('Chromium') > -1,
@@ -69,10 +65,7 @@ export class Browser {
       360: u.indexOf('QihooBrowser') > -1 || u.indexOf('QHBrowser') > -1,
       '360EE': u.indexOf('360EE') > -1,
       '360SE': u.indexOf('360SE') > -1,
-      UC:
-        u.indexOf('UCBrowser') > -1 ||
-        u.indexOf(' UBrowser') > -1 ||
-        u.indexOf('UCWEB') > -1,
+      UC: u.indexOf('UCBrowser') > -1 || u.indexOf(' UBrowser') > -1 || u.indexOf('UCWEB') > -1,
       QQBrowser: u.indexOf('QQBrowser') > -1,
       QQ: u.indexOf('QQ/') > -1,
       Baidu:
@@ -84,10 +77,7 @@ export class Browser {
       Maxthon: u.indexOf('Maxthon') > -1,
       Sogou: u.indexOf('MetaSr') > -1 || u.indexOf('Sogou') > -1,
       Liebao: u.indexOf('LBBROWSER') > -1 || u.indexOf('LieBaoFast') > -1,
-      '2345Explorer':
-        u.indexOf('2345Explorer') > -1 ||
-        u.indexOf('Mb2345Browser') > -1 ||
-        u.indexOf('2345chrome') > -1,
+      '2345Explorer': u.indexOf('2345Explorer') > -1 || u.indexOf('Mb2345Browser') > -1 || u.indexOf('2345chrome') > -1,
       '115Browser': u.indexOf('115Browser') > -1,
       TheWorld: u.indexOf('TheWorld') > -1,
       XiaoMi: u.indexOf('MiuiBrowser') > -1,
@@ -102,12 +92,9 @@ export class Browser {
       Suning: u.indexOf('SNEBUY-APP') > -1,
       iQiYi: u.indexOf('IqiyiApp') > -1,
       DingTalk: u.indexOf('DingTalk') > -1,
-      Huawei:
-        u.indexOf('HuaweiBrowser') > -1 ||
-        u.indexOf('HUAWEI/') > -1 ||
-        u.indexOf('HONOR') > -1,
+      Huawei: u.indexOf('HuaweiBrowser') > -1 || u.indexOf('HUAWEI/') > -1 || u.indexOf('HONOR') > -1,
       Vivo: u.indexOf('VivoBrowser') > -1,
-      //系统或平台
+      // 系统或平台
       Windows: u.indexOf('Windows') > -1,
       Linux: u.indexOf('Linux') > -1 || u.indexOf('X11') > -1,
       'Mac OS': u.indexOf('Macintosh') > -1,
@@ -116,30 +103,26 @@ export class Browser {
       Ubuntu: u.indexOf('Ubuntu') > -1,
       FreeBSD: u.indexOf('FreeBSD') > -1,
       Debian: u.indexOf('Debian') > -1,
-      'Windows Phone':
-        u.indexOf('IEMobile') > -1 || u.indexOf('Windows Phone') > -1,
+      'Windows Phone': u.indexOf('IEMobile') > -1 || u.indexOf('Windows Phone') > -1,
       BlackBerry: u.indexOf('BlackBerry') > -1 || u.indexOf('RIM') > -1,
       MeeGo: u.indexOf('MeeGo') > -1,
       Symbian: u.indexOf('Symbian') > -1,
       iOS: u.indexOf('like Mac OS X') > -1,
       'Chrome OS': u.indexOf('CrOS') > -1,
       WebOS: u.indexOf('hpwOS') > -1,
-      //设备
-      Mobile:
-        u.indexOf('Mobi') > -1 ||
-        u.indexOf('iPh') > -1 ||
-        u.indexOf('480') > -1,
+      // 设备
+      Mobile: u.indexOf('Mobi') > -1 || u.indexOf('iPh') > -1 || u.indexOf('480') > -1,
       Tablet:
         u.indexOf('Tablet') > -1 ||
         u.indexOf('Pad') > -1 ||
         u.indexOf('Nexus 7') > -1 ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1),
-      //环境
-      isWebview: u.indexOf('; wv)') > -1
+      // 环境
+      isWebview: u.indexOf('; wv)') > -1,
     }
     let is360 = false
     if (_window.chrome) {
-      let chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
+      const chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
       if (_window.chrome.adblock2345 || _window.chrome.common2345) {
         match['2345Explorer'] = true
       } else if (
@@ -152,35 +135,33 @@ export class Browser {
       } else if (chrome_version > 45) {
         is360 = _mime('type', 'application/vnd.chromium.remoting-viewer')
         if (!is360 && chrome_version >= 69) {
-          is360 =
-            _mime('type', 'application/hwepass2001.installepass2001') ||
-            _mime('type', 'application/asx')
+          is360 = _mime('type', 'application/hwepass2001.installepass2001') || _mime('type', 'application/asx')
         }
       }
     }
-    //修正
-    if (match['Mobile']) {
-      match['Mobile'] = !(u.indexOf('iPad') > -1)
+    // 修正
+    if (match.Mobile) {
+      match.Mobile = !(u.indexOf('iPad') > -1)
     } else if (is360) {
       if (_mime('type', 'application/gameplugin')) {
         match['360SE'] = true
       } else if (
         _navigator &&
-        typeof _navigator['connection'] !== 'undefined' &&
-        typeof _navigator['connection']['saveData'] == 'undefined'
+        typeof _navigator.connection !== 'undefined' &&
+        typeof _navigator.connection.saveData === 'undefined'
       ) {
         match['360SE'] = true
       } else {
         match['360EE'] = true
       }
     }
-    if (match['Baidu'] && match['Opera']) {
-      match['Baidu'] = false
-    } else if (match['iOS']) {
-      match['Safari'] = true
+    if (match.Baidu && match.Opera) {
+      match.Baidu = false
+    } else if (match.iOS) {
+      match.Safari = true
     }
-    //基本信息
-    let hash = {
+    // 基本信息
+    const hash = {
       engine: ['WebKit', 'Trident', 'Gecko', 'Presto', 'KHTML'],
       browser: [
         'Safari',
@@ -229,7 +210,7 @@ export class Browser {
         'Douban',
         'Suning',
         'iQiYi',
-        'DingTalk'
+        'DingTalk',
       ],
       os: [
         'Windows',
@@ -246,32 +227,32 @@ export class Browser {
         'MeeGo',
         'Symbian',
         'Chrome OS',
-        'WebOS'
+        'WebOS',
       ],
-      device: ['Mobile', 'Tablet']
+      device: ['Mobile', 'Tablet'],
     }
     this.device = 'PC'
     this.language = (function () {
-      let g = _navigator.browserLanguage || _navigator.language
-      let arr = g.split('-')
+      const g = _navigator.browserLanguage || _navigator.language
+      const arr = g.split('-')
       if (arr[1]) {
         arr[1] = arr[1].toUpperCase()
       }
       return arr.join('_')
     })()
-    for (let s in hash) {
+    for (const s in hash) {
       for (let i = 0; i < hash[s].length; i++) {
-        let value = hash[s][i]
+        const value = hash[s][i]
         if (match[value]) {
           this[s] = value
         }
       }
     }
-    //系统版本信息
-    let osVersion = {
-      Windows: function () {
-        let v = u.replace(/^Mozilla\/\d.0 \(Windows NT ([\d.]+)[;)].*$/, '$1')
-        let hash = {
+    // 系统版本信息
+    const osVersion = {
+      Windows() {
+        const v = u.replace(/^Mozilla\/\d.0 \(Windows NT ([\d.]+)[;)].*$/, '$1')
+        const hash = {
           10: '10',
           6.4: '10',
           6.3: '8.1',
@@ -280,24 +261,24 @@ export class Browser {
           '6.0': 'Vista',
           5.2: 'XP',
           5.1: 'XP',
-          '5.0': '2000'
+          '5.0': '2000',
         }
         return hash[v] || v
       },
-      Android: function () {
+      Android() {
         return u.replace(/^.*Android ([\d.]+);.*$/, '$1')
       },
-      HarmonyOS: function () {
-        let v = u.replace(/^Mozilla.*Android ([\d.]+)[;)].*$/, '$1')
-        let hash = {
-          10: '2'
+      HarmonyOS() {
+        const v = u.replace(/^Mozilla.*Android ([\d.]+)[;)].*$/, '$1')
+        const hash = {
+          10: '2',
         }
         return hash[v] || ''
       },
-      iOS: function () {
+      iOS() {
         return u.replace(/^.*OS ([\d_]+) like.*$/, '$1').replace(/_/g, '.')
       },
-      Debian: function () {
+      Debian() {
         return u.replace(/^.*Debian\/([\d.]+).*$/, '$1')
       },
       'Windows Phone': function () {
@@ -306,9 +287,9 @@ export class Browser {
       'Mac OS': function () {
         return u.replace(/^.*Mac OS X ([\d_]+).*$/, '$1').replace(/_/g, '.')
       },
-      WebOS: function () {
+      WebOS() {
         return u.replace(/^.*hpwOS\/([\d.]+);.*$/, '$1')
-      }
+      },
     }
     this.osVersion = ''
     if (osVersion[this.os]) {
@@ -317,86 +298,78 @@ export class Browser {
         this.osVersion = ''
       }
     }
-    this.isWebview = match['isWebview']
-    //浏览器版本信息
-    let version = {
-      Safari: function () {
+    this.isWebview = match.isWebview
+    // 浏览器版本信息
+    const version = {
+      Safari() {
         return u.replace(/^.*Version\/([\d.]+).*$/, '$1')
       },
-      Chrome: function () {
-        return u
-          .replace(/^.*Chrome\/([\d.]+).*$/, '$1')
-          .replace(/^.*CriOS\/([\d.]+).*$/, '$1')
+      Chrome() {
+        return u.replace(/^.*Chrome\/([\d.]+).*$/, '$1').replace(/^.*CriOS\/([\d.]+).*$/, '$1')
       },
-      IE: function () {
-        return u
-          .replace(/^.*MSIE ([\d.]+).*$/, '$1')
-          .replace(/^.*rv:([\d.]+).*$/, '$1')
+      IE() {
+        return u.replace(/^.*MSIE ([\d.]+).*$/, '$1').replace(/^.*rv:([\d.]+).*$/, '$1')
       },
-      Edge: function () {
+      Edge() {
         return u
           .replace(/^.*Edge\/([\d.]+).*$/, '$1')
           .replace(/^.*Edg\/([\d.]+).*$/, '$1')
           .replace(/^.*EdgA\/([\d.]+).*$/, '$1')
           .replace(/^.*EdgiOS\/([\d.]+).*$/, '$1')
       },
-      Firefox: function () {
-        return u
-          .replace(/^.*Firefox\/([\d.]+).*$/, '$1')
-          .replace(/^.*FxiOS\/([\d.]+).*$/, '$1')
+      Firefox() {
+        return u.replace(/^.*Firefox\/([\d.]+).*$/, '$1').replace(/^.*FxiOS\/([\d.]+).*$/, '$1')
       },
       'Firefox Focus': function () {
         return u.replace(/^.*Focus\/([\d.]+).*$/, '$1')
       },
-      Chromium: function () {
+      Chromium() {
         return u.replace(/^.*Chromium\/([\d.]+).*$/, '$1')
       },
-      Opera: function () {
-        return u
-          .replace(/^.*Opera\/([\d.]+).*$/, '$1')
-          .replace(/^.*OPR\/([\d.]+).*$/, '$1')
+      Opera() {
+        return u.replace(/^.*Opera\/([\d.]+).*$/, '$1').replace(/^.*OPR\/([\d.]+).*$/, '$1')
       },
-      Vivaldi: function () {
+      Vivaldi() {
         return u.replace(/^.*Vivaldi\/([\d.]+).*$/, '$1')
       },
-      Yandex: function () {
+      Yandex() {
         return u.replace(/^.*YaBrowser\/([\d.]+).*$/, '$1')
       },
-      Arora: function () {
+      Arora() {
         return u.replace(/^.*Arora\/([\d.]+).*$/, '$1')
       },
-      Lunascape: function () {
+      Lunascape() {
         return u.replace(/^.*Lunascape[\/\s]([\d.]+).*$/, '$1')
       },
-      QupZilla: function () {
+      QupZilla() {
         return u.replace(/^.*QupZilla[\/\s]([\d.]+).*$/, '$1')
       },
       'Coc Coc': function () {
         return u.replace(/^.*coc_coc_browser\/([\d.]+).*$/, '$1')
       },
-      Kindle: function () {
+      Kindle() {
         return u.replace(/^.*Version\/([\d.]+).*$/, '$1')
       },
-      Iceweasel: function () {
+      Iceweasel() {
         return u.replace(/^.*Iceweasel\/([\d.]+).*$/, '$1')
       },
-      Konqueror: function () {
+      Konqueror() {
         return u.replace(/^.*Konqueror\/([\d.]+).*$/, '$1')
       },
-      Iceape: function () {
+      Iceape() {
         return u.replace(/^.*Iceape\/([\d.]+).*$/, '$1')
       },
-      SeaMonkey: function () {
+      SeaMonkey() {
         return u.replace(/^.*SeaMonkey\/([\d.]+).*$/, '$1')
       },
-      Epiphany: function () {
+      Epiphany() {
         return u.replace(/^.*Epiphany\/([\d.]+).*$/, '$1')
       },
-      360: function () {
+      360() {
         return u.replace(/^.*QihooBrowser\/([\d.]+).*$/, '$1')
       },
       '360SE': function () {
-        let hash = {
+        const hash = {
           86: '13.0',
           78: '12.0',
           69: '11.0',
@@ -405,13 +378,13 @@ export class Browser {
           45: '8.1',
           42: '8.0',
           31: '7.0',
-          21: '6.3'
+          21: '6.3',
         }
-        let chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
+        const chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
         return hash[chrome_version] || ''
       },
       '360EE': function () {
-        let hash = {
+        const hash = {
           95: '21',
           86: '13.0',
           78: '12.0',
@@ -419,39 +392,35 @@ export class Browser {
           63: '9.5',
           55: '9.0',
           50: '8.7',
-          30: '7.5'
+          30: '7.5',
         }
-        let chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
+        const chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
         return hash[chrome_version] || ''
       },
-      Maxthon: function () {
+      Maxthon() {
         return u.replace(/^.*Maxthon\/([\d.]+).*$/, '$1')
       },
-      QQBrowser: function () {
+      QQBrowser() {
         return u.replace(/^.*QQBrowser\/([\d.]+).*$/, '$1')
       },
-      QQ: function () {
+      QQ() {
         return u.replace(/^.*QQ\/([\d.]+).*$/, '$1')
       },
-      Baidu: function () {
-        return u
-          .replace(/^.*BIDUBrowser[\s\/]([\d.]+).*$/, '$1')
-          .replace(/^.*baiduboxapp\/([\d.]+).*$/, '$1')
+      Baidu() {
+        return u.replace(/^.*BIDUBrowser[\s\/]([\d.]+).*$/, '$1').replace(/^.*baiduboxapp\/([\d.]+).*$/, '$1')
       },
-      UC: function () {
+      UC() {
         return u.replace(/^.*UC?Browser\/([\d.]+).*$/, '$1')
       },
-      Sogou: function () {
-        return u
-          .replace(/^.*SE ([\d.X]+).*$/, '$1')
-          .replace(/^.*SogouMobileBrowser\/([\d.]+).*$/, '$1')
+      Sogou() {
+        return u.replace(/^.*SE ([\d.X]+).*$/, '$1').replace(/^.*SogouMobileBrowser\/([\d.]+).*$/, '$1')
       },
-      Liebao: function () {
+      Liebao() {
         let version = ''
         if (u.indexOf('LieBaoFast') > -1) {
           version = u.replace(/^.*LieBaoFast\/([\d.]+).*$/, '$1')
         }
-        let hash = {
+        const hash = {
           57: '6.5',
           49: '6.0',
           46: '5.9',
@@ -459,74 +428,67 @@ export class Browser {
           39: '5.2',
           34: '5.0',
           29: '4.5',
-          21: '4.0'
+          21: '4.0',
         }
-        let chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
+        const chrome_version = u.replace(/^.*Chrome\/([\d]+).*$/, '$1')
         return version || hash[chrome_version] || ''
       },
       '2345Explorer': function () {
-        let hash = { 69: '10.0', 55: '9.9' }
-        let chrome_version = navigator.userAgent.replace(
-          /^.*Chrome\/([\d]+).*$/,
-          '$1'
-        )
+        const hash = { 69: '10.0', 55: '9.9' }
+        const chrome_version = navigator.userAgent.replace(/^.*Chrome\/([\d]+).*$/, '$1')
         return (
           hash[chrome_version] ||
-          u
-            .replace(/^.*2345Explorer\/([\d.]+).*$/, '$1')
-            .replace(/^.*Mb2345Browser\/([\d.]+).*$/, '$1')
+          u.replace(/^.*2345Explorer\/([\d.]+).*$/, '$1').replace(/^.*Mb2345Browser\/([\d.]+).*$/, '$1')
         )
       },
       '115Browser': function () {
         return u.replace(/^.*115Browser\/([\d.]+).*$/, '$1')
       },
-      TheWorld: function () {
+      TheWorld() {
         return u.replace(/^.*TheWorld ([\d.]+).*$/, '$1')
       },
-      XiaoMi: function () {
+      XiaoMi() {
         return u.replace(/^.*MiuiBrowser\/([\d.]+).*$/, '$1')
       },
-      Vivo: function () {
+      Vivo() {
         return u.replace(/^.*VivoBrowser\/([\d.]+).*$/, '$1')
       },
-      Quark: function () {
+      Quark() {
         return u.replace(/^.*Quark\/([\d.]+).*$/, '$1')
       },
-      Qiyu: function () {
+      Qiyu() {
         return u.replace(/^.*Qiyu\/([\d.]+).*$/, '$1')
       },
-      Wechat: function () {
+      Wechat() {
         return u.replace(/^.*MicroMessenger\/([\d.]+).*$/, '$1')
       },
-      WechatWork: function () {
+      WechatWork() {
         return u.replace(/^.*wxwork\/([\d.]+).*$/, '$1')
       },
-      Taobao: function () {
+      Taobao() {
         return u.replace(/^.*AliApp\(TB\/([\d.]+).*$/, '$1')
       },
-      Alipay: function () {
+      Alipay() {
         return u.replace(/^.*AliApp\(AP\/([\d.]+).*$/, '$1')
       },
-      Weibo: function () {
+      Weibo() {
         return u.replace(/^.*weibo__([\d.]+).*$/, '$1')
       },
-      Douban: function () {
+      Douban() {
         return u.replace(/^.*com.douban.frodo\/([\d.]+).*$/, '$1')
       },
-      Suning: function () {
+      Suning() {
         return u.replace(/^.*SNEBUY-APP([\d.]+).*$/, '$1')
       },
-      iQiYi: function () {
+      iQiYi() {
         return u.replace(/^.*IqiyiVersion\/([\d.]+).*$/, '$1')
       },
-      DingTalk: function () {
+      DingTalk() {
         return u.replace(/^.*DingTalk\/([\d.]+).*$/, '$1')
       },
-      Huawei: function () {
-        return u
-          .replace(/^.*Version\/([\d.]+).*$/, '$1')
-          .replace(/^.*HuaweiBrowser\/([\d.]+).*$/, '$1')
-      }
+      Huawei() {
+        return u.replace(/^.*Version\/([\d.]+).*$/, '$1').replace(/^.*HuaweiBrowser\/([\d.]+).*$/, '$1')
+      },
     }
     this.version = ''
     if (version[this.browser]) {
@@ -535,18 +497,14 @@ export class Browser {
         this.version = ''
       }
     }
-    //修正
+    // 修正
     if (this.browser == 'Chrome' && u.match(/\S+Browser/)) {
       this.browser = u.match(/\S+Browser/)[0]
       this.version = u.replace(/^.*Browser\/([\d.]+).*$/, '$1')
     }
     if (this.browser == 'Edge') {
       this.engine = parseInt(this.version) > 75 ? 'Blink' : 'EdgeHTML'
-    } else if (
-      match['Chrome'] &&
-      this.engine == 'WebKit' &&
-      parseInt(version['Chrome']()) > 27
-    ) {
+    } else if (match.Chrome && this.engine == 'WebKit' && parseInt(version.Chrome()) > 27) {
       this.engine = 'Blink'
     } else if (this.browser == 'Opera' && parseInt(this.version) > 12) {
       this.engine = 'Blink'

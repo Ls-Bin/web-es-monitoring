@@ -1,4 +1,4 @@
-import { EsIndex } from './../enum'
+import { EsIndex } from '../enum'
 import webEsMonitoring, { Options } from '../index'
 import { baseInfo, checkSampling, formatDate } from '../utils'
 /* eslint-disable no-restricted-globals */
@@ -25,22 +25,16 @@ function initXHRErr() {
       params = params || {
         bubbles: false,
         cancelable: false,
-        detail: undefined
+        detail: undefined,
       }
       const evt = document.createEvent('CustomEvent')
-      evt.initCustomEvent(
-        event,
-        params.bubbles,
-        params.cancelable,
-        params.detail
-      )
+      evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail)
       return evt
     }
 
     CustomEvent.prototype = window.Event.prototype
 
     window.CustomEvent = CustomEvent as any
-    return
   })()
 
   function ajaxEventTrigger(this: any, event: string) {
@@ -49,7 +43,7 @@ function initXHRErr() {
   }
 
   const oldXHR = window.XMLHttpRequest as any
-  const open = window.XMLHttpRequest.prototype.open
+  const { open } = window.XMLHttpRequest.prototype
   function openReplacement(this: any, method: string, url: string) {
     this._url = url
     // eslint-disable-next-line prefer-rest-params
@@ -106,15 +100,16 @@ function initFetchErr(core: webEsMonitoring, options: Options) {
   window.fetch = function (...args) {
     const timeStamp = new Date().getTime()
     return _oldFetch.apply(this, [...args]).then((res: any) => {
-      const reportData = Object.assign({}, baseInfo(), {
+      const reportData = {
+        ...baseInfo(),
         _esIndex: EsIndex.ApiRequest,
         date: formatDate(),
         url: res.url,
         type: 'fetch',
         fetchType: res.type,
         status: res.status,
-        duration: new Date().getTime() - timeStamp
-      })
+        duration: new Date().getTime() - timeStamp,
+      }
 
       if (options.filter) isCanReport = options.filter(reportData)
 
@@ -134,17 +129,17 @@ export default {
     initXHRErr()
     initFetchErr(core, options)
 
-    const reportUrl = core.reportUrl
+    const { reportUrl } = core
     const ajaxRecordArr: any[] = []
     window.addEventListener('ajaxLoadStart', function (e: any) {
       ajaxRecordArr.push({
         timeStamp: new Date().getTime(),
         event: e,
-        isLoadEnd: false
+        isLoadEnd: false,
       })
     })
     window.addEventListener('ajaxLoadEnd', function () {
-      ajaxRecordArr.forEach(record => {
+      ajaxRecordArr.forEach((record) => {
         if (record.isLoadEnd) return
         const XHR = record.event.detail
         if (XHR.status > 0) {
@@ -152,23 +147,21 @@ export default {
           record.isLoadEnd = true
 
           // exclude es report xhr
-          if (
-            !url.includes(reportUrl) &&
-            !url.includes(`/${EsIndex.ApiRequest}/`)
-          ) {
-            const reportData = Object.assign({}, baseInfo(), {
+          if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
+            const reportData = {
+              ...baseInfo(),
               _esIndex: EsIndex.ApiRequest,
               date: formatDate(),
-              url: url,
+              url,
               type: 'xhr',
               eventType: 'loadEnd',
               status: XHR.status,
-              duration: new Date().getTime() - record.timeStamp
+              duration: new Date().getTime() - record.timeStamp,
 
               // userAgent: '',
               // response: '',
               // params: ''
-            })
+            }
 
             if (options.filter) isCanReport = options.filter(reportData)
 
@@ -176,40 +169,32 @@ export default {
               core.reportLazy(reportData)
             }
           }
-
-          return
         }
       })
     })
 
     window.addEventListener('ajaxTimeout', function () {
-      ajaxRecordArr.forEach(record => {
+      ajaxRecordArr.forEach((record) => {
         if (record.isLoadEnd) return
         const XHR = record.event.detail
 
         // find current timeout XHR
-        if (
-          XHR.status === 0 &&
-          XHR.readyState === 4 &&
-          XHR.responseURL === ''
-        ) {
+        if (XHR.status === 0 && XHR.readyState === 4 && XHR.responseURL === '') {
           const url = XHR._url
           record.isLoadEnd = true
 
           // // exclude es report xhr
-          if (
-            !url.includes(reportUrl) &&
-            !url.includes(`/${EsIndex.ApiRequest}/`)
-          ) {
-            const reportData = Object.assign({}, baseInfo(), {
+          if (!url.includes(reportUrl) && !url.includes(`/${EsIndex.ApiRequest}/`)) {
+            const reportData = {
+              ...baseInfo(),
               _esIndex: EsIndex.ApiRequest,
               date: formatDate(),
-              url: url,
+              url,
               type: 'xhr',
               eventType: 'timeout',
               status: 0,
-              duration: XHR.timeout
-            })
+              duration: XHR.timeout,
+            }
 
             if (options.filter) isCanReport = options.filter(reportData)
 
@@ -217,10 +202,8 @@ export default {
               core.reportLazy(reportData)
             }
           }
-
-          return
         }
       })
     })
-  }
+  },
 }

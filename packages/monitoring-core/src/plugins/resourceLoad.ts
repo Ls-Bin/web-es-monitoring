@@ -1,13 +1,12 @@
-import { EsIndex } from './../enum';
+import { EsIndex } from '../enum'
 import webEsMonitoring, { Options } from '../index'
-import { baseInfo, checkSampling as checkSampling, formatDate } from '../utils'
+import { baseInfo, checkSampling, formatDate } from '../utils'
 
 interface Pf extends PerformanceEntry {
   transferSize?: number
   initiatorType?: string
   nextHopProtocol?: string
 }
-
 
 export default {
   lazy: 2000,
@@ -20,7 +19,8 @@ export default {
     setTimeout(() => {
       const resource = performance.getEntriesByType('resource')
 
-      const reportData = Object.assign({}, baseInfo(), {
+      const reportData = {
+        ...baseInfo(),
         _esIndex: EsIndex.ResourceLoad,
         date: formatDate(),
         resource: resource
@@ -33,24 +33,21 @@ export default {
               name: url,
               // 资源加载耗时
               duration: Math.floor(item.duration),
-              //资源大小
+              // 资源大小
               transferSize: item.transferSize,
-              //资源所用协议
+              // 资源所用协议
               // protocol: item.nextHopProtocol,
               initiatorType: item.initiatorType,
-              nextHopProtocol: item.nextHopProtocol
+              nextHopProtocol: item.nextHopProtocol,
             }
-          })
-      })
+          }),
+      }
 
-
-      if (options.filter) isCanReport = options.filter(reportData);
+      if (options.filter) isCanReport = options.filter(reportData)
 
       if (isCanReport) {
         core.reportLazy(reportData)
       }
-
-
     }, this.lazy)
-  }
+  },
 }

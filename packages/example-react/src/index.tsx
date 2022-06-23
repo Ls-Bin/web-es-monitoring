@@ -17,6 +17,7 @@ import resourceLoadPlugin from 'monitoring-core/src/plugins/resourceLoad';
 import apiRequestPlugin from 'monitoring-core/src/plugins/apiRequest';
 import reportPlugin from 'monitoring-core/src/plugins/report';
 import {get} from 'monitoring-core/src/http';
+
 const webEsMonitoring = new WebEsMonitoring({
     reportUrl: 'http://localhost:8080/es',
 });
@@ -44,15 +45,13 @@ function testPromise() {
     });
 }
 
-
 // promise测试
 testPromise().then((d) => {
     // @ts-ignore
     JSON.parse('sdfs');
 });
 
-throw 'js error错误测试'
-
+throw 'js error错误测试';
 
 // fetch请求测试
 fetch('https://api.github.com/users/defunkt', {

@@ -15,7 +15,6 @@ interface ReportOptions extends Options {
   maxReportCache?: number
 }
 
-
 const initReport = (_opt: any) => {
   const queue = new Queue()
   let timeout: any = null
@@ -26,13 +25,10 @@ const initReport = (_opt: any) => {
     }
 
     const result = queue.front()
-    const _esIndex = result._esIndex
-    const _params = Object.assign({}, result, { _esIndex: undefined })
+    const { _esIndex } = result
+    const _params = { ...result, _esIndex: undefined }
 
-    imageRequest(
-      _opt.reportUrl + '/' + _esIndex + '/_doc/',
-      _params
-    )
+    imageRequest(`${_opt.reportUrl}/${_esIndex}/_doc/`, _params)
 
     // post(
     //   _opt.reportUrl + '/' + _esIndex + '/_doc/',
@@ -57,8 +53,8 @@ const initReport = (_opt: any) => {
       if (queue.size()) {
         clearInterval(timeout)
         timeout = doIntervalRequest()
-      }else {
-        timeout=null
+      } else {
+        timeout = null
       }
     }, 1000)
   }
@@ -73,24 +69,21 @@ const initReport = (_opt: any) => {
  * elasticsearch _bulk 合并发送请求 格式参考：https://www.elastic.co/guide/cn/elasticsearch/guide/current/bulk.html
  * @param reportDataArray report数组
  */
-async function bulkRequest(reportDataArray: ReportData[],options:ReportOptions) {
-  if(!reportDataArray.length)return
+async function bulkRequest(reportDataArray: ReportData[], options: ReportOptions) {
+  if (!reportDataArray.length) return
 
   const esBlukDatas: string[] = []
   for (const item of reportDataArray) {
     esBlukDatas.push(JSON.stringify({ create: { _index: item._esIndex } }))
-    esBlukDatas.push(
-      JSON.stringify(Object.assign({}, item, { _esIndex: undefined }))
-    )
+    esBlukDatas.push(JSON.stringify({ ...item, _esIndex: undefined }))
   }
 
-  const reportDataStr = esBlukDatas.join('\n') + '\n'
-  if(navigator.sendBeacon){
-    navigator.sendBeacon(options.reportUrl+'/_bulk', reportDataStr);
-  }else {
-    await post(options.reportUrl + '/_bulk/', reportDataStr)
+  const reportDataStr = `${esBlukDatas.join('\n')}\n`
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(`${options.reportUrl}/_bulk`, reportDataStr)
+  } else {
+    await post(`${options.reportUrl}/_bulk/`, reportDataStr)
   }
-
 }
 
 export default {
@@ -106,7 +99,7 @@ export default {
       reportPool.push(reportData)
 
       if (reportPool.length >= maxReportCache) {
-        bulkRequest(reportPool.slice(0, maxReportCache),options)
+        bulkRequest(reportPool.slice(0, maxReportCache), options)
         reportPool.splice(0, maxReportCache)
       }
     }
@@ -117,18 +110,18 @@ export default {
     // 页面关闭或隐藏时提交所有report
     document.addEventListener('visibilitychange', function logData() {
       if (document.visibilityState === 'hidden') {
-        if(reportPool.length){
-          bulkRequest(reportPool,options)
-          reportPool=[]
+        if (reportPool.length) {
+          bulkRequest(reportPool, options)
+          reportPool = []
         }
       }
-    });
+    })
     // 兼容safari
-    window.addEventListener("pagehide", event => {
-      if(reportPool.length){
-        bulkRequest(reportPool,options)
-        reportPool=[]
+    window.addEventListener('pagehide', (event) => {
+      if (reportPool.length) {
+        bulkRequest(reportPool, options)
+        reportPool = []
       }
-    });
-  }
+    })
+  },
 } as any

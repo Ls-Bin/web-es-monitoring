@@ -6,14 +6,14 @@ interface Params {
 }
 
 interface Request {
-  (type: string, url: string, params: Params|any): Promise<any>
+  (type: string, url: string, params: Params | any): Promise<any>
 }
 
 const request: Request = function (type, url, params) {
   return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest()
+    const xhr = new XMLHttpRequest()
     xhr.timeout = 1000 * 30
-    xhr.open(type, type === 'GET' ? `${url}${convertObj(params)?("?"+convertObj(params)):''}` : url, true)
+    xhr.open(type, type === 'GET' ? `${url}${convertObj(params) ? `?${convertObj(params)}` : ''}` : url, true)
     xhr.setRequestHeader('content-type', 'application/json')
     xhr.onload = function () {
       if (xhr.getResponseHeader('Content-Type')?.includes('application/json')) {
@@ -23,12 +23,11 @@ const request: Request = function (type, url, params) {
       return resolve(xhr.responseText)
     }
     xhr.onerror = function () {
-      reject({reportError:xhr})
-
+      reject({ reportError: xhr })
     }
 
     xhr.ontimeout = function () {
-      reject({reportError:xhr})
+      reject({ reportError: xhr })
     }
 
     if (type === 'GET') {
@@ -36,7 +35,6 @@ const request: Request = function (type, url, params) {
     } else {
       xhr.send(params)
     }
-
   })
 }
 
@@ -47,7 +45,7 @@ const get = function (url: string, params: Params) {
   return request('GET', url, params)
 }
 
-const post = function (url: string, params: Params|string) {
+const post = function (url: string, params: Params | string) {
   return request('POST', url, params)
 }
 const put = function (url: string, params: Params) {
