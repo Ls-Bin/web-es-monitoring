@@ -35,6 +35,7 @@ function initXHRErr() {
     CustomEvent.prototype = window.Event.prototype
 
     window.CustomEvent = CustomEvent as any
+    return
   })()
 
   function ajaxEventTrigger(this: any, event: string) {

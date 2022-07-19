@@ -1,6 +1,7 @@
 // @ts-ignore
 import { Browser } from './browser'
-
+// @ts-ignore
+import Cookies from 'js-cookie'
 export function convertObj(data: { [key: string]: string }) {
   const _result = []
   for (const key in data) {
@@ -20,7 +21,7 @@ export function formatNum(value: number) {
   return Math.floor(value)
 }
 
-const uid = generateUUID()
+const uid = getUUID()
 export function baseInfo(): {
   uid: string
   pageUrl: string
@@ -34,6 +35,7 @@ export function baseInfo(): {
   version: string
 } {
   const browserData = new Browser() as any
+
   return {
     uid,
     pageUrl: location.href,
@@ -63,6 +65,15 @@ function generateUUID() {
     }
     return (c == 'x' ? r : (r & 0x7) | 0x8).toString(16)
   })
+}
+
+function getUUID() {
+  let uid = Cookies.get('uid')
+  if (!uid || uid === 'undefined') {
+    uid = generateUUID()
+    Cookies.set('uid', uid, { expires: 365 })
+  }
+  return uid
 }
 
 export function formatDate() {
