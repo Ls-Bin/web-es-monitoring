@@ -1,9 +1,11 @@
 import { EsIndex } from '../enum'
 import { formatNum, checkSampling, baseInfo, formatDate } from '../utils'
 import webEsMonitoring, { Options } from '../index'
+type globalErrorOptions = Options & { ignoreErrors: string[] }
+
 
 export default {
-  install(core: webEsMonitoring, options: Options) {
+  install(core: webEsMonitoring, options: globalErrorOptions) {
     let isCanReport = checkSampling(options.sampleRate)
     if (!isCanReport) return
 
@@ -17,7 +19,7 @@ export default {
         lineno: event.lineno,
         message: event.message,
         filename: event.filename,
-        stack: event.error.stack,
+        stack: event?.error?.stack || '',
         timeStamp: formatNum(event.timeStamp),
       }
 
@@ -30,6 +32,8 @@ export default {
 
     // js error
     window.addEventListener('error', (error: any) => {
+      const { message } = error
+      if (options?.ignoreErrors.includes(message)) return
       console.error('listener:error', error)
       if (
         !(

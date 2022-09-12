@@ -23,7 +23,7 @@ const webEsMonitoring = new WebEsMonitoring({
 });
 
 webEsMonitoring.use(reportPlugin);
-webEsMonitoring.use(globalErrorPlugin);
+webEsMonitoring.use(globalErrorPlugin, {ignoreErrors: ['']});
 webEsMonitoring.use(apiRequestPlugin);
 
 webEsMonitoring.use(resourceLoadPlugin);
